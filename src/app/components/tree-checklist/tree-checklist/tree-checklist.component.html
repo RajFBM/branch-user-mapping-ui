@@ -1,0 +1,47 @@
+<!-- <input [(ngModel)]="searchString" /> -->
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+  <mat-tree-node
+    *matTreeNodeDef="let node"
+    [style.display]="
+      filterLeafNode(node) ? 'none' : 'flex'
+    "
+    matTreeNodeToggle
+    matTreeNodePadding
+    matTreeNodePaddingIndent="40"
+  >
+    <button class="button__arrow" mat-icon-button disabled></button>
+    <mat-checkbox
+      class="checklist-leaf-node"
+      [checked]="checklistSelection.isSelected(node)"
+      (change)="todoLeafItemSelectionToggle(node)"
+      >{{node.item}}</mat-checkbox
+    >
+  </mat-tree-node>
+  
+
+  <mat-tree-node
+    *matTreeNodeDef="let node; when: hasChild"
+    [style.display]="filterParentNode(node) ? 'none' : 'flex'"
+    matTreeNodePadding
+    matTreeNodePaddingIndent="40"
+  >
+    <button
+      class="button__arrow"
+      mat-icon-button
+      matTreeNodeToggle
+      [attr.aria-label]="'Toggle ' + node.item"
+    >
+    
+      <mat-icon class="mat-icon-rtl-mirror">
+        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+      </mat-icon>
+
+    </button>
+    <mat-checkbox
+      [checked]="descendantsAllSelected(node)"
+      [indeterminate]="descendantsPartiallySelected(node)"
+      (change)="todoItemSelectionToggle(node)"
+      >{{node.item}}</mat-checkbox
+    >
+  </mat-tree-node>
+</mat-tree>

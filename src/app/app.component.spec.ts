@@ -19,7 +19,7 @@ describe('AppComponent', () => {
   it(`should have as title 'branch-user-mapping-ui'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('branch-user-mapping-ui');
+    expect(app.getAllUsers).toEqual('branch-user-mapping-ui');
   });
 
   it('should render title', () => {

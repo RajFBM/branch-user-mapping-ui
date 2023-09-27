@@ -22,10 +22,18 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-              "src/styles.css"
+            "styles": [             
+           
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",              
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/datatables.net-dt/css/jquery.dataTables.css"              
+               
+            
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/datatables.net/js/jquery.dataTables.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -90,6 +98,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": []
