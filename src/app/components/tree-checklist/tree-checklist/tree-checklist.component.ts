@@ -1,10 +1,11 @@
-import {SelectionModel} from '@angular/cdk/collections';
-import {FlatTreeControl} from '@angular/cdk/tree';
-import {Component, Injectable} from '@angular/core';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import {BehaviorSubject} from 'rxjs';
+import { SelectionModel } from '@angular/cdk/collections';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { Component, EventEmitter, Injectable, Output } from '@angular/core';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LocationService } from 'app/services/location.service';
+import { LocationDetails } from 'app/models/locations';
 
 
 
@@ -14,63 +15,12 @@ export class TodoItemNode {
 }
 
 export class TodoItemFlatNode {
-  item: string ='';
-  level: number=0;
-  expandable: boolean=false;
+  item: string = '';
+  level: number = 0;
+  expandable: boolean = false;
 }
 
-/**
- * The Json object for to-do list data.
- */
-const TREE_DATA = {
-  Root: {
-    Groceries: {
-      'Almond Meal flour': null,
-      'Organic eggs': null,
-      'Protein Powder': null,
-      Fruits: {
-        Apple: null,
-        Berries: ['Blueberry', 'Raspberry'],
-        Orange: null
-      }
-    },
-    Reminders: {
-      'Cook dinner': null,
-      'Read the Material Design spec': null,
-      'Upgrade Application to Angular': null,
-      Fruits: {
-        Apple: null,
-        Berries: ['Orange', 'Mango'],
-        Orange: null
-      }
-    },
-    Reminders1: {
-      'Cook dinner 1': null,
-      'Read the Material Design spec 1': null,
-      'Upgrade Application to Angular 1': null,
-      Fruits: {
-        Apple: null,
-        Berries: ['Grapes', 'Pomegranate'],
-        Orange: null
-      }
-    },
-    Reminders2: {
-      'Cook dinner 2': null,
-      'Read the Material Design spec 2': null,
-      'Upgrade Application to Angular 2': null,
-      Fruits: {
-        Apple: null,
-        Berries: ['Grapes1', 'Pomegranate1'],
-        Orange: null
-      }
-    },
-    Reminders3: [
-      'Cook dinner 3',
-      'Read the Material Design spec 3',
-      'Upgrade Application to Angular 3',
-    ]
-  }
-};
+
 
 /**
  * Checklist database, it can build a tree structured Json object.
@@ -82,45 +32,76 @@ export class ChecklistDatabase {
   dataChange = new BehaviorSubject<TodoItemNode[]>([]);
   get data(): TodoItemNode[] { return this.dataChange.value; }
 
-  constructor(private http: HttpClient, private readonly _locationService:LocationService) {
+  constructor(private http: HttpClient, private readonly _locationService: LocationService) {
     this.initialize();
   }
 
   initialize() {
-    // this.http.get('https://d59a23b1-afcb-4265-8761-f4d91b07c713.mock.pstmn.io/get')
-    // this.http.get('https://1418e641-5366-4d2d-857d-27359bcbd939.mock.pstmn.io/data')
-this._locationService.getAllLocations()
-    .subscribe(async (data: any) => {
-      const treeData = await this.buildTreeFromApiResponse(data);
-      this.dataChange.next(treeData);
-    });
+
+    // this._locationService.getAllLocations()
+    //     .subscribe(async (data: any) => {
+    //       const treeData = await this.buildTreeFromApiResponse(data);
+    //       this.dataChange.next(treeData);
+    //       debugger;
+    //       console.log(treeData);
+    //     });
+
+    this._locationService.getAllLocations()
+      .subscribe(async (data: LocationDetails) => {
+        const treeData = await this.buildTreeFromApiResponse(data);
+        this.dataChange.next(treeData);
+      });
+
   }
 
 
-  private async buildTreeFromApiResponse(apiData: any): Promise<TodoItemNode[]> {
-    const treeData: TodoItemNode[] = [];
-  
-    const buildTree = (data: any): TodoItemNode[] => {
-      return Object.keys(data).map(key => {
-        const node = new TodoItemNode();
-        // node.item = data[key].leaf_Name;
-        node.item = data[key]?.leaf_Name || '';
+  // private async buildTreeFromApiResponse(apiData: any): Promise<TodoItemNode[]> {
+  //   const treeData: TodoItemNode[] = [];
 
-        const children = data[key];
-        if (children && typeof children === 'object') {
-          node.children = buildTree(children);
+  //   const buildTree = (data: any): TodoItemNode[] => {
+  //     return Object.keys(data).map(key => {
+  //       const node = new TodoItemNode();
+  //       // node.item = data[key].leaf_Name;
+  //       node.item = data[key]?.levelName || '';
+
+  //       const children = data[key];
+  //       if (children && typeof children === 'object') {
+  //         node.children = buildTree(children);
+  //       }
+
+  //       return node;
+  //     });
+  //   };
+
+  //   treeData.push(...buildTree(apiData));
+
+  //   return treeData;
+  // }
+
+  private async buildTreeFromApiResponse(apiData: LocationDetails): Promise<TodoItemNode[]> {
+    const treeData: TodoItemNode[] = [];
+
+    const buildTree = (data: LocationDetails): TodoItemNode[] => {
+      const node = new TodoItemNode();
+      node.item = data.levelName;
+      node.children = []; // Initialize the children array
+
+      if (data.children && data.children.length > 0) {
+        for (const child of data.children) {
+          node.children = node.children.concat(buildTree(child)); // Concatenate child nodes
         }
-  
-        return node;
-      });
+      }
+
+      return [node];
     };
-  
+
     treeData.push(...buildTree(apiData));
-  
+
     return treeData;
   }
 
-  buildFileTree(obj: {[key: string]: any}, level: number): any[] {
+
+  buildFileTree(obj: { [key: string]: any }, level: number): any[] {
     return Object.keys(obj).reduce<any[]>((accumulator, key) => {
       const value = obj[key];
       const node = new TodoItemNode();
@@ -146,7 +127,7 @@ this._locationService.getAllLocations()
   /** Add an item to to-do list */
   insertItem(parent: TodoItemNode, name: string) {
     if (parent.children) {
-      parent.children.push({item: name} as TodoItemNode);
+      parent.children.push({ item: name } as TodoItemNode);
       this.dataChange.next(this.data);
     }
   }
@@ -167,6 +148,7 @@ this._locationService.getAllLocations()
   providers: [ChecklistDatabase]
 })
 export class TreeChecklistExample {
+  @Output() nodeSelectionList: EventEmitter<TodoItemFlatNode> = new EventEmitter();
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
   searchString = ''
@@ -182,7 +164,7 @@ export class TreeChecklistExample {
 
   /** The selection for checklist */
   checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
-node: any;
+  node: any;
 
   constructor(private _database: ChecklistDatabase) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
@@ -210,8 +192,8 @@ node: any;
   transformer = (node: TodoItemNode, level: number) => {
     const existingNode = this.nestedNodeMap.get(node);
     const flatNode = existingNode && existingNode.item === node.item
-        ? existingNode
-        : new TodoItemFlatNode();
+      ? existingNode
+      : new TodoItemFlatNode();
     flatNode.item = node.item;
     flatNode.level = level;
     flatNode.expandable = !!node.children?.length;
@@ -226,7 +208,7 @@ node: any;
     }
     return node.item.toLowerCase()
       .indexOf(this.searchString?.toLowerCase()) === -1
-    
+
   }
 
   filterParentNode(node: TodoItemFlatNode): boolean {
@@ -234,7 +216,7 @@ node: any;
     if (
       !this.searchString ||
       node.item.toLowerCase().indexOf(this.searchString?.toLowerCase()) !==
-        -1
+      -1
     ) {
       return false
     }
@@ -268,53 +250,84 @@ node: any;
     return result && !this.descendantsAllSelected(node);
   }
 
-  // todoItemSelectionToggle(node: TodoItemFlatNode): void {
-  //   this.checklistSelection.toggle(node);
-  //   const descendants = this.treeControl.getDescendants(node);
-  //   this.checklistSelection.isSelected(node)
-  //     ? this.checklistSelection.select(...descendants)
-  //     : this.checklistSelection.deselect(...descendants);
-
-  //   descendants.forEach(child => this.checklistSelection.isSelected(child));
-  //   this.checkAllParentsSelection(node);
-  // }
-
-  todoItemSelectionToggle(node: TodoItemFlatNode): void {
+  todoItemSelectionToggle(node: any): void {
+    // Toggle the selection of the clicked node
+    this.checklistSelection.toggle(node);
+    this.nodeSelectionList.emit(node);
+    // Get the parent node
     const parent = this.getParentNode(node);
   
+    // If a parent node exists, recursively update its selection
     if (parent) {
-      const parentSelected = this.checklistSelection.isSelected(parent);
-  
-      if (!parentSelected) {
-        // If the parent is deselected, select only the parent node
-        this.checklistSelection.select(parent);
-      } else {
-        // If the parent is selected, deselect it
-        this.checklistSelection.deselect(parent);
-      }
-  
-      // Recursively check parent nodes
-      this.checkAllParentsSelection(parent);
+      this.updateParentSelection(parent);
     }
   }
+  
+  // Function to get the parent node of a given node
+  getParentNode(node: any): any {
+    const data = this.treeControl.dataNodes;
+    const nodeIndex = data.indexOf(node);
+  
+    if (nodeIndex === -1) {
+      return null; // Node not found in data
+    }
+  
+    // Find the parent node by checking for nodes with lower indentation level
+    for (let i = nodeIndex - 1; i >= 0; i--) {
+      if (data[i].level < node.level) {
+        return data[i];
+      }
+    }
+  
+    return null; // No parent node found
+  }
+  
+  // Function to update the selection of a parent node based on its children
+  updateParentSelection(parent: any): void {
+    const children = this.treeControl.getDescendants(parent);
+    const allChildrenSelected = children.every((child) =>
+      this.checklistSelection.isSelected(child)
+    );
+  
+    if (allChildrenSelected) {
+      this.checklistSelection.select(parent);
+    } else {
+      this.checklistSelection.deselect(parent);
+    }
+  
+    // Recursively update the parent's parent, if it exists
+    const grandparent = this.getParentNode(parent);
+    if (grandparent) {
+      this.updateParentSelection(grandparent);
+    }
+  }
+  
+
 
   todoLeafItemSelectionToggle(node: TodoItemFlatNode): void {
     this.checklistSelection.toggle(node);
     this.checkAllParentsSelection(node);
+    this.nodeSelectionList.emit(node);
+    console.log("todoLeafItemSelectionToggle" + node);
+    console.log(JSON.stringify(node));
   }
 
   checkAllParentsSelection(node: TodoItemFlatNode): void {
+
     let parent: TodoItemFlatNode | null = this.getParentNode(node);
     while (parent) {
       this.checkRootNodeSelection(parent);
       parent = this.getParentNode(parent);
+      const val = this.checklistSelection.setSelection()
     }
   }
 
   checkRootNodeSelection(node: TodoItemFlatNode): void {
+
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
     const descAllSelected = descendants.length > 0 && descendants.every(child => {
+
       return this.checklistSelection.isSelected(child);
     });
     if (nodeSelected && !descAllSelected) {
@@ -324,23 +337,37 @@ node: any;
     }
   }
 
-  getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
-    const currentLevel = this.getLevel(node);
+  // getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
 
-    if (currentLevel < 1) {
-      return null;
+  //   const currentLevel = this.getLevel(node);
+
+  //   if (currentLevel < 1) {
+  //     return null;
+  //   }
+
+
+  //   const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
+
+  //   for (let i = startIndex; i >= 0; i--) {
+  //     const currentNode = this.treeControl.dataNodes[i];
+
+  //     if (this.getLevel(currentNode) < currentLevel) {
+  //       return currentNode;
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  // Handle selection change
+  onNodeSelected(event: any): void {
+    const selectedNode = event.option.value; // The selected node
+    if (this.checklistSelection.isSelected(selectedNode)) {
+      // Node was selected
+      console.log('Selected Node:', selectedNode);
+    } else {
+      // Node was deselected
+      console.log(' Node: Unselected', selectedNode);
     }
-
-    const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
-
-    for (let i = startIndex; i >= 0; i--) {
-      const currentNode = this.treeControl.dataNodes[i];
-
-      if (this.getLevel(currentNode) < currentLevel) {
-        return currentNode;
-      }
-    }
-    return null;
   }
 
 }

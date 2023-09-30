@@ -1,27 +1,14 @@
-
-  <div class="row">
+<div class="row">
   <div class="col-md-12 form-group">
-  <mat-form-field class="width">
-    <input
-      matInput
-      placeholder="Select User"
-      aria-label="User"
-      [matAutocomplete]="auto"
-      [formControl]="countryCtrl"
-      required
-    />
-    <mat-icon matSuffix>arrow_drop_down</mat-icon>
-    <mat-autocomplete #auto="matAutocomplete">
-       <mat-option
-        *ngFor="let country of filteredCountry | async"
-        [value]="country.name"
-      >
-        <span>{{ country.name }} | {{ country.code }}</span>
-      </mat-option> 
-    </mat-autocomplete>
-  </mat-form-field>
+    <mat-form-field class="width">
+      <input matInput placeholder="Select User" aria-label="User" [matAutocomplete]="auto" required
+        (input)="onInput($event)" />
+      <mat-icon matSuffix (click)="handleDropdownClick()">arrow_drop_down</mat-icon>
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let user of adUsers" [value]="user.logonName" (click)="onOptionSelected(user.logonName)">
+          <span>{{ user.logonName }}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
 </div>
-</div>
-
-
-

@@ -8,8 +8,8 @@ import { LocationDetails } from 'app/models/locations';
   providedIn: "root"
 })
 export class LocationService extends CommonHttpService {
-  getAllLocations(): Observable<LocationDetails[]> {
-    return this.sendGetRequest<LocationDetails[]>(GlobalConstant.apiBaseUrl +'Location/GetAllLocation');
+  getAllLocations(): Observable<LocationDetails> {  
+    return this.sendGetRequest<LocationDetails>(GlobalConstant.apiBaseUrl +'Location/GetAllLocation');
   }
 }
 
