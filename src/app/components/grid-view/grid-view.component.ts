@@ -25,6 +25,5 @@ export interface Element {
 const ELEMENT_DATA: Element[] = [
   { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
   { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  // Add more data here...
 ];
 

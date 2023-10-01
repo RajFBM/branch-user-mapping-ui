@@ -20,7 +20,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-md-4 form-group">
+      <div class="col-md-6 form-group">
         <mat-form-field>
           <mat-label>Location</mat-label>
           <input matInput placeholder="Location Enter" type="text">
@@ -28,14 +28,19 @@
         <button mat-button color="primary">
           <mat-icon>search</mat-icon> Find
         </button>
+        <!-- <mat-form-field>
+          <mat-label>Email Id</mat-label>
+          <input matInput placeholder="Input Field" readonly>
+        </mat-form-field> -->
+        
       </div>
 
     </div>
     <!-- Second Row: Tree View -->
-    <div class="row">
+    <div class="row" style="width: 100%;">
 
-      <div class="col-md-4 form-group" style="border: 4px solid rgb(169, 238, 236); height: 600px; overflow-y: scroll;">
-        <tree-checklist-example (nodeSelectionList)="nodeSelectionHandler($event)">Loading</tree-checklist-example>
+      <div class="col-md-12 form-group" style="border: 4px solid rgb(169, 238, 236); height: 600px; overflow-y: scroll;">
+        <tree-checklist-example  (nodeSelectionList)="nodeSelectionHandler($event)">Loading</tree-checklist-example>
       </div>
       <!-- Second Row: Grid View -->
       <div class="col-md-8 form-group" style="border: 4px solid rgb(179, 121, 170); height: 600px; overflow-y: scroll;">
@@ -98,3 +103,4 @@
 
 </div>
 </mat-drawer-container>
+<!-- <app-login></app-login> -->

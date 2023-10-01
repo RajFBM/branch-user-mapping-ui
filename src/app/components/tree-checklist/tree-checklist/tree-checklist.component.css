@@ -13,12 +13,6 @@ mat-tree-node {
   font-size: 12px !important;
 }
 
-/* .button__arrow {
-  width: 10px !important;
-  height: 10px !important;
-  margin-left: 50px !important;
-  line-height: 5px !important;
-} */
 
 :host ::ng-deep .mat-checkbox-inner-container {
   margin-right: 6px !important;

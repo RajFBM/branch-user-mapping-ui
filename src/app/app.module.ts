@@ -36,6 +36,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SearchDropdownComponent } from './components/search-dropdown/search-dropdown.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { LoginComponent } from './components/login/login.component';
 
 
 
@@ -49,7 +50,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     FooterComponent,
     TreeChecklistExample,
     SearchDropdownComponent,
-    SidebarComponent
+    SidebarComponent,
+    LoginComponent
     
   ],
   imports: [
@@ -73,6 +75,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     
   ],
   bootstrap: [AppComponent],
+  //bootstrap: [LoginComponent],
   entryComponents: [TreeChecklistExample],
   // declarations: [TreeChecklistExample],
   // bootstrap: [TreeChecklistExample],

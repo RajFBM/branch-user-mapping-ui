@@ -13,23 +13,14 @@ import { map, startWith } from 'rxjs/operators';
 })
 export class SearchDropdownComponent implements OnInit {
   @Output() userChange: EventEmitter<string>= new EventEmitter();
-  length: number = 0;
-  // countryCtrl: FormControl;
-  // filteredCountry: Observable<any[]>;
+  length: number = 0; 
   adUsers: AdUser[] = [];//Observable<AdUser[]>;
   location_lis: LocationDetails[] = [];
   userList: any[] = [];
 
   //adUsers: AdUser[] = [];
   constructor(private readonly _userService: UserService,private userDataService: UserDataService) {
-
-    // this.countryCtrl = new FormControl();
-    // this.filteredCountry = this.countryCtrl.valueChanges.pipe(
-    //   startWith(''),
-    //   map((country) =>
-    //     country ? this.filtercountry(country) : this.userList.slice()
-    //   )
-    // );
+  
   }
   ngOnInit() {
     this.userChange.emit("");
@@ -40,13 +31,7 @@ export class SearchDropdownComponent implements OnInit {
     this.userChange.emit(selectedLogonName);
   }
   
-  // filtercountry(name: string) {
-  //   let arr = this.userList.filter(
-  //     (country) => country.name.toLowerCase().indexOf(name.toLowerCase()) === 0
-  //   );
-  //   return arr.length ? arr : [{ name: 'No Item found', code: 'null' }];
-  // }
-  handleDropdownClick() {
+    handleDropdownClick() {
     // Implement your logic here
     console.log('Dropdown clicked');
   }

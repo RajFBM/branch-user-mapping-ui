@@ -1,13 +1,13 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, EventEmitter, Injectable, Output } from '@angular/core';
+import { Component, EventEmitter, Injectable, Input, OnInit, Output } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LocationService } from 'app/services/location.service';
 import { LocationDetails } from 'app/models/locations';
-
-
+import { UserDetails } from 'app/models/UserDetails';
+import { DataSharedService } from 'app/services/data-shared.service';
 
 export class TodoItemNode {
   children: TodoItemNode[] = [];
@@ -20,8 +20,6 @@ export class TodoItemFlatNode {
   expandable: boolean = false;
 }
 
-
-
 /**
  * Checklist database, it can build a tree structured Json object.
  * Each node in Json object represents a to-do item or a category.
@@ -32,20 +30,11 @@ export class ChecklistDatabase {
   dataChange = new BehaviorSubject<TodoItemNode[]>([]);
   get data(): TodoItemNode[] { return this.dataChange.value; }
 
-  constructor(private http: HttpClient, private readonly _locationService: LocationService) {
+  constructor(private readonly _locationService: LocationService) {
     this.initialize();
   }
 
   initialize() {
-
-    // this._locationService.getAllLocations()
-    //     .subscribe(async (data: any) => {
-    //       const treeData = await this.buildTreeFromApiResponse(data);
-    //       this.dataChange.next(treeData);
-    //       debugger;
-    //       console.log(treeData);
-    //     });
-
     this._locationService.getAllLocations()
       .subscribe(async (data: LocationDetails) => {
         const treeData = await this.buildTreeFromApiResponse(data);
@@ -53,31 +42,6 @@ export class ChecklistDatabase {
       });
 
   }
-
-
-  // private async buildTreeFromApiResponse(apiData: any): Promise<TodoItemNode[]> {
-  //   const treeData: TodoItemNode[] = [];
-
-  //   const buildTree = (data: any): TodoItemNode[] => {
-  //     return Object.keys(data).map(key => {
-  //       const node = new TodoItemNode();
-  //       // node.item = data[key].leaf_Name;
-  //       node.item = data[key]?.levelName || '';
-
-  //       const children = data[key];
-  //       if (children && typeof children === 'object') {
-  //         node.children = buildTree(children);
-  //       }
-
-  //       return node;
-  //     });
-  //   };
-
-  //   treeData.push(...buildTree(apiData));
-
-  //   return treeData;
-  // }
-
   private async buildTreeFromApiResponse(apiData: LocationDetails): Promise<TodoItemNode[]> {
     const treeData: TodoItemNode[] = [];
 
@@ -138,16 +102,13 @@ export class ChecklistDatabase {
   }
 }
 
-/**
- * @title Tree with checkboxes
- */
 @Component({
   selector: 'tree-checklist-example',
   templateUrl: 'tree-checklist.component.html',
   styleUrls: ['tree-checklist.component.css'],
   providers: [ChecklistDatabase]
 })
-export class TreeChecklistExample {
+export class TreeChecklistExample implements OnInit {
   @Output() nodeSelectionList: EventEmitter<TodoItemFlatNode> = new EventEmitter();
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
@@ -165,8 +126,9 @@ export class TreeChecklistExample {
   /** The selection for checklist */
   checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
   node: any;
+  savedUserLocation: string[]=[];
 
-  constructor(private _database: ChecklistDatabase) {
+  constructor(private _database: ChecklistDatabase, private readonly dataSharedService: DataSharedService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
@@ -178,6 +140,15 @@ export class TreeChecklistExample {
       this.treeControl.expand(this.treeControl.dataNodes[0])
     });
   }
+  ngOnInit(): void {
+    this.dataSharedService.userSavedData.subscribe(res => {
+      this.savedUserLocation=res;
+    });
+  }
+  shouldCheckCheckbox(node: TodoItemFlatNode): boolean {
+    return this.savedUserLocation.includes(node.item);
+  }
+  
 
   getLevel = (node: TodoItemFlatNode) => node.level;
 
@@ -232,7 +203,6 @@ export class TreeChecklistExample {
     ) {
       return false
     }
-
     return true
   }
 
@@ -251,58 +221,55 @@ export class TreeChecklistExample {
   }
 
   todoItemSelectionToggle(node: any): void {
+    
     // Toggle the selection of the clicked node
     this.checklistSelection.toggle(node);
     this.nodeSelectionList.emit(node);
     // Get the parent node
     const parent = this.getParentNode(node);
-  
+
     // If a parent node exists, recursively update its selection
     if (parent) {
       this.updateParentSelection(parent);
     }
   }
-  
-  // Function to get the parent node of a given node
+
   getParentNode(node: any): any {
     const data = this.treeControl.dataNodes;
     const nodeIndex = data.indexOf(node);
-  
+
     if (nodeIndex === -1) {
       return null; // Node not found in data
     }
-  
-    // Find the parent node by checking for nodes with lower indentation level
+
     for (let i = nodeIndex - 1; i >= 0; i--) {
       if (data[i].level < node.level) {
         return data[i];
       }
     }
-  
+
     return null; // No parent node found
   }
-  
+
   // Function to update the selection of a parent node based on its children
   updateParentSelection(parent: any): void {
     const children = this.treeControl.getDescendants(parent);
     const allChildrenSelected = children.every((child) =>
       this.checklistSelection.isSelected(child)
     );
-  
+
     if (allChildrenSelected) {
       this.checklistSelection.select(parent);
     } else {
       this.checklistSelection.deselect(parent);
     }
-  
+
     // Recursively update the parent's parent, if it exists
     const grandparent = this.getParentNode(parent);
     if (grandparent) {
       this.updateParentSelection(grandparent);
     }
   }
-  
-
 
   todoLeafItemSelectionToggle(node: TodoItemFlatNode): void {
     this.checklistSelection.toggle(node);
@@ -337,27 +304,6 @@ export class TreeChecklistExample {
     }
   }
 
-  // getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
-
-  //   const currentLevel = this.getLevel(node);
-
-  //   if (currentLevel < 1) {
-  //     return null;
-  //   }
-
-
-  //   const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
-
-  //   for (let i = startIndex; i >= 0; i--) {
-  //     const currentNode = this.treeControl.dataNodes[i];
-
-  //     if (this.getLevel(currentNode) < currentLevel) {
-  //       return currentNode;
-  //     }
-  //   }
-  //   return null;
-  // }
-
   // Handle selection change
   onNodeSelected(event: any): void {
     const selectedNode = event.option.value; // The selected node
@@ -369,5 +315,4 @@ export class TreeChecklistExample {
       console.log(' Node: Unselected', selectedNode);
     }
   }
-
 }

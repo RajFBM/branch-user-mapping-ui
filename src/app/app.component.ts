@@ -9,6 +9,7 @@ import 'datatables.net';
 // import DataTables from 'datatables.net';
 import * as DataTables from 'datatables.net';
 import { UserDataService } from './services/user-data.service';
+import { DataSharedService } from './services/data-shared.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,6 +19,9 @@ import { UserDataService } from './services/user-data.service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('userCategory')
   userCategory!: ElementRef;
+  // @ViewChild('userEmail')
+  // userEmail!: ElementRef;
+  
   public userDataArray: UserDetails[] = [];
   public filteredUserData: UserDetails[] = [];
   public userDataListForSave: UserDetails[] = [];
@@ -30,28 +34,30 @@ export class AppComponent implements AfterViewInit {
   selectedLogonName: string | undefined;
 
 
-  constructor(private userDataService: UserDataService, private renderer: Renderer2, private el: ElementRef, private readonly userService: UserService) {
-
+  constructor(private userDataService: UserDataService, private renderer: Renderer2, private el: ElementRef, 
+    private readonly userService: UserService,
+    private readonly dataSharedService: DataSharedService) {
     this.selectedLogonName = this.userDataService.getSelectedLogonName();
-
   }
   userChangeHandler(selectedUser: string) {
-    debugger;
     this.userDataListForSave = [];
     if (selectedUser !== "" && selectedUser !== null) {
       this.selectedUser = selectedUser;
       this.filteredUserData = this.userDataArray.filter(x => x.userId == selectedUser);
+      const userNmaeLst = this.filteredUserData.map(x => x.locationAccess);
+      this.dataSharedService.userSavedData.next(userNmaeLst);
     }
   }
   nodeSelectionHandler(node: any) {
-    alert(JSON.stringify(node));
+    debugger
+    // alert(JSON.stringify(node));
     const userDetails = {
       createD_TIMESTAMP: new Date(),
       createD_BY: this.selectedUser,
       modifieD_TIMESTAMP: new Date(),
       modifieD_BY: "",
       userId: this.selectedUser,
-      userEmail: 'raj@yopmail.com',
+      userEmail: 'raj@yopmail.com',      
       userCategory: this.userCategory.nativeElement.value,
       locationAccess: node.item
     };
@@ -117,6 +123,7 @@ export class AppComponent implements AfterViewInit {
     });
   }
   addUser() {
+    debugger
     this.userService.addUser(this.userDataListForSave[0]).subscribe({
       next: (response) => {
         this.getAllUsers();

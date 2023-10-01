@@ -1,13 +1,12 @@
-<!-- <input [(ngModel)]="searchString" /> -->
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <mat-tree-node
     *matTreeNodeDef="let node"
     [style.display]="
-      filterLeafNode(node) ? 'none' : 'flex'
+      filterLeafNode(node) ? 'none' : 'flex'     
     "
     matTreeNodeToggle
     matTreeNodePadding
-    matTreeNodePaddingIndent="40"
+    matTreeNodePaddingIndent="40"  
   >
     <button class="button__arrow" mat-icon-button disabled></button>
     <mat-checkbox
@@ -38,7 +37,7 @@
 
     </button>
     <mat-checkbox
-      [checked]="descendantsAllSelected(node)"
+    [checked]="shouldCheckCheckbox(node)"
       [indeterminate]="descendantsPartiallySelected(node)"
       (change)="todoItemSelectionToggle(node)"
       >{{node.item}}</mat-checkbox

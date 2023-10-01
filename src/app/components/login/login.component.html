@@ -1,0 +1,47 @@
+<div class="wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="logo">
+            <div class="logo-img"><img src="./assets/img/FBMLogo.PNG"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 6%;">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+              <div class="card">
+                  <div class="card-header card-header-info">
+                      <h4 class="card-title">Login</h4>
+                  </div>                 
+
+                  <div class="card-body">
+                    <!-- <p><span class="loginProgressSpan">Login is in progress, please wait...</span></p>
+                    <mat-progress-bar class="progress-bar" [color]="color" [mode]="mode" [value]="value" [bufferValue]="bufferValue">
+                    </mat-progress-bar> -->
+                    <form #loginForm='ngForm' >
+                    <!-- (ngSubmit)="onLogin(loginForm)"> -->
+                    <!-- <form #loginForm='ngForm' *ngIf="isNativeLogin" (ngSubmit)="onLogin(loginForm)"> -->
+                        <div class="row">
+                          <div class="col-md-12">
+                            <mat-form-field class="example-full-width">
+                              <input matInput placeholder="Username" required ngModel name="userName">
+                            </mat-form-field>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <mat-form-field class="example-full-width">
+                                <input matInput placeholder="Password" required type="password" ngModel name="password">
+                              </mat-form-field>
+                            </div>
+                        </div>
+                        <!-- <button mat-raised-button [disabled]="!loginForm.valid" (click)="onLoginClick()"  type="button" class="btn btn-info pull-center">Login</button> -->
+                        <button mat-raised-button [disabled]="!loginForm.valid"  type="submit" class="btn btn-info pull-center">Login</button>
+                        <div class="clearfix"></div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-4"></div>
+      </div>
+    </div>
+  </div>
