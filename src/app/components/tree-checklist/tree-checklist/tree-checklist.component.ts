@@ -109,6 +109,7 @@ export class ChecklistDatabase {
   providers: [ChecklistDatabase]
 })
 export class TreeChecklistExample implements OnInit {
+  [x: string]: any;
   @Output() nodeSelectionList: EventEmitter<TodoItemFlatNode> = new EventEmitter();
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
@@ -126,7 +127,7 @@ export class TreeChecklistExample implements OnInit {
   /** The selection for checklist */
   checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
   node: any;
-  savedUserLocation: string[]=[];
+  savedUserLocation: string[] = [];
 
   constructor(private _database: ChecklistDatabase, private readonly dataSharedService: DataSharedService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
@@ -142,13 +143,13 @@ export class TreeChecklistExample implements OnInit {
   }
   ngOnInit(): void {
     this.dataSharedService.userSavedData.subscribe(res => {
-      this.savedUserLocation=res;
+      this.savedUserLocation = res;
     });
   }
   shouldCheckCheckbox(node: TodoItemFlatNode): boolean {
     return this.savedUserLocation.includes(node.item);
   }
-  
+
 
   getLevel = (node: TodoItemFlatNode) => node.level;
 
@@ -221,7 +222,7 @@ export class TreeChecklistExample implements OnInit {
   }
 
   todoItemSelectionToggle(node: any): void {
-    
+
     // Toggle the selection of the clicked node
     this.checklistSelection.toggle(node);
     this.nodeSelectionList.emit(node);
@@ -304,14 +305,14 @@ export class TreeChecklistExample implements OnInit {
     }
   }
 
-  // Handle selection change
+
   onNodeSelected(event: any): void {
     const selectedNode = event.option.value; // The selected node
     if (this.checklistSelection.isSelected(selectedNode)) {
-      // Node was selected
+
       console.log('Selected Node:', selectedNode);
     } else {
-      // Node was deselected
+
       console.log(' Node: Unselected', selectedNode);
     }
   }

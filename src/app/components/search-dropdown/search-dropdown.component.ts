@@ -12,46 +12,36 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./search-dropdown.component.css']
 })
 export class SearchDropdownComponent implements OnInit {
-  @Output() userChange: EventEmitter<string>= new EventEmitter();
-  length: number = 0; 
+  @Output() userChange: EventEmitter<string> = new EventEmitter();
+  length: number = 0;
   adUsers: AdUser[] = [];//Observable<AdUser[]>;
   location_lis: LocationDetails[] = [];
   userList: any[] = [];
 
   //adUsers: AdUser[] = [];
-  constructor(private readonly _userService: UserService,private userDataService: UserDataService) {
-  
+  constructor(private readonly _userService: UserService, private userDataService: UserDataService) {
+
   }
   ngOnInit() {
     this.userChange.emit("");
   }
   onOptionSelected(selectedLogonName: string) {
-    
+
     this.userDataService.setSelectedLogonName(selectedLogonName);
     this.userChange.emit(selectedLogonName);
   }
-  
-    handleDropdownClick() {
-    // Implement your logic here
-    console.log('Dropdown clicked');
-  }
+
+
 
   onInput(event: Event): void {
     // Update the user input as the user types
-   let val= (event.target as HTMLInputElement).value;
+    let val = (event.target as HTMLInputElement).value;
+    let charLength = val.length;
+    if (charLength >= 3) {
+      this._userService.getAdUsersId(val).subscribe(res => {
+        this.adUsers = res;
+      });
 
-   let charLength=val.length;
-
-   console.log("Character Count"+charLength);//RIP
-   console.log("Character Count"+val);//
-
-   if(charLength >= 3)
-   {
-  
-    this._userService.getAdUsersId(val).subscribe(res => {
-      this.adUsers =res;
-    });
-    console.log("Character Count"+charLength);
-   }   
-  }  
+    }
+  }
 }

@@ -11,40 +11,40 @@ import { AdUser } from 'app/models/ad-user';
 })
 export class UserService extends CommonHttpService {
 
-  // mainURL : string = environment.mainUrl;
-  //constructor(private http: HttpClient) { }
+
 
   getAllUsers(): Observable<UserDetails[]> {
 
-    return this.sendGetRequest<UserDetails[]>(GlobalConstant.apiBaseUrl +'User/GetAllUsersDetailList');
-    //return this.http.get<UserService[]>(this.mainURL + 'api/admin/GetAllUsers');
-  }
-  getAdUsersId(userId:string): Observable<AdUser[]> {
- 
+    return this.sendGetRequest<UserDetails[]>(GlobalConstant.apiBaseUrl + 'User/GetAllUsersDetailList');
 
-    return this.sendGetRequest<AdUser[]>(GlobalConstant.apiBaseUrl +'GetADusers?searchTerm='+userId);
-    //return this.http.get<UserService[]>(this.mainURL + 'api/admin/GetAllUsers');
   }
-  
+  getAdUsersId(userId: string): Observable<AdUser[]> {
+
+
+    return this.sendGetRequest<AdUser[]>(GlobalConstant.apiBaseUrl + 'GetADusers?searchTerm=' + userId);
+
+  }
+
 
   updateUser(user: UserDetails, userId: string): Observable<Number> {
-    console.log(GlobalConstant.apiBaseUrl +`User/UpdateUser?userId=${userId}`);
-    return this.sendPutRequest<Number>(GlobalConstant.apiBaseUrl+`User/UpdateUser?userId=${userId}`, user);
+    console.log(GlobalConstant.apiBaseUrl + `User/UpdateUser?userId=${userId}`);
+    return this.sendPutRequest<Number>(GlobalConstant.apiBaseUrl + `User/UpdateUser?userId=${userId}`, user);
   }
   addUser(userDetail: UserDetails): Observable<number> {
-    return this.sendPostRequest<number>(GlobalConstant.apiBaseUrl+'User/AddUserLocation', userDetail);
+    return this.sendPostRequest<number>(GlobalConstant.apiBaseUrl + 'User/AddUserLocation', userDetail);
   }
 
-  deleteUser(userId: any): Observable<boolean> {
-    
-    return this.sendDeleteRequest<boolean>(GlobalConstant.apiBaseUrl+'User/DeleteUser?userId='+userId);
+
+
+
+  deleteUser(userId: any, locationAccess: any): Observable<boolean> {
+    const url = `${GlobalConstant.apiBaseUrl}User/DeleteUserLocation?userId=${userId}&locationAccess=${locationAccess}`;
+    return this.sendDeleteRequest<boolean>(url);
   }
 
-  // Treeview(): Observable<UserDetails[]> {
 
-  //   return this.sendTreeGetRequest<UserDetails[]>(GlobalConstant.apiBaseUrl +'User/GetAllLocation');
-  //   //return this.http.get<UserService[]>(this.mainURL + 'api/admin/GetAllUsers');
-  // }
+
+
 
 
 }

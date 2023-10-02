@@ -1,5 +1,6 @@
 export interface UserDetails {
         userId : string ;
+        userEmail : string ;
         userCategory : string ;
         locationAccess : string;
         modifieD_TIMESTAMP : Date ;

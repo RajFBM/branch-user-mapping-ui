@@ -1,33 +1,20 @@
 <mat-toolbar color="info" class="border-bottom bg-white header">
     <mat-toolbar-row>
-        <!-- <span class="logo-img"><img src="./assets/img/FBMLogo.PNG"></span> -->
+
         <span class="logo-img"><img src="./assets/img/FBMLogo.PNG"></span>
-        <!-- <button mat-icon-button  mat-raised-button>
-          <mat-icon>menu</mat-icon>
-      </button> -->
+
         <button mat-icon-button (click)="toggleSideBar()" mat-raised-button>
             <mat-icon>menu</mat-icon>
         </button>
         <div fxFlex fxLayout="row" fxLayoutAlign="flex-end" class="logout-icon-right">
             <ul class='profileMenu' fxLayout="row" fxLayoutGap="20px">
-                <!-- <li *ngIf="userDetails.IsAdmin == 1">
-                <a>
-                    <mat-icon>admin_panel_settings</mat-icon>Manage Admin<span class="sr-only">(current)</span></a>
-              </li> -->
+
                 <li>
-                    <!-- <span>Hello, {{userDetails.FirstName}} </span> -->
+                    <span>Hello, {{"Raj"}} </span>
                     <button mat-icon-button mat-raised-mat-button matTooltip="LOGOUT" [matTooltipPosition]="'above'">
                         <mat-icon>exit_to_app</mat-icon>
                     </button>
-                    <!-- <button mat-button [matMenuTriggerFor]="menu">
-                      <mat-icon>person_outline</mat-icon>
-                  </button>
-                  <mat-menu #menu="matMenu">
-                      <button mat-menu-item>
-                          <mat-icon>exit_to_app</mat-icon>
-                          Sign out
-                      </button>
-                  </mat-menu> -->
+
 
                 </li>
             </ul>

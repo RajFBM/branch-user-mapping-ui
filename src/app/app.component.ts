@@ -1,12 +1,11 @@
-//import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, AfterViewInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { UserDetails } from './models/UserDetails';
 import { UserService } from './services/user.service';
-// import * as $ from 'jquery';
+
 import 'datatables.net';
-// import DataTables from 'datatables.net';
+
 import * as DataTables from 'datatables.net';
 import { UserDataService } from './services/user-data.service';
 import { DataSharedService } from './services/data-shared.service';
@@ -19,14 +18,12 @@ import { DataSharedService } from './services/data-shared.service';
 export class AppComponent implements AfterViewInit {
   @ViewChild('userCategory')
   userCategory!: ElementRef;
-  // @ViewChild('userEmail')
-  // userEmail!: ElementRef;
-  
   public userDataArray: UserDetails[] = [];
   public filteredUserData: UserDetails[] = [];
   public userDataListForSave: UserDetails[] = [];
   selectedUser!: string;
   sideBarOpen = true;
+  userEmailValue: string = "";
 
   sideBarToggler() {
     this.sideBarOpen = !this.sideBarOpen;
@@ -34,30 +31,37 @@ export class AppComponent implements AfterViewInit {
   selectedLogonName: string | undefined;
 
 
-  constructor(private userDataService: UserDataService, private renderer: Renderer2, private el: ElementRef, 
+  constructor(private userDataService: UserDataService, private renderer: Renderer2, private el: ElementRef,
     private readonly userService: UserService,
     private readonly dataSharedService: DataSharedService) {
     this.selectedLogonName = this.userDataService.getSelectedLogonName();
   }
-  userChangeHandler(selectedUser: string) {
+  userChangeHandler(selectedUserEmail: string) {
     this.userDataListForSave = [];
-    if (selectedUser !== "" && selectedUser !== null) {
-      this.selectedUser = selectedUser;
-      this.filteredUserData = this.userDataArray.filter(x => x.userId == selectedUser);
+    this.userEmailValue = selectedUserEmail;
+
+
+
+    if (selectedUserEmail !== "" && selectedUserEmail !== null) {
+      this.selectedUser = selectedUserEmail;
+      this.filteredUserData = this.userDataArray.filter(x => x.userEmail == selectedUserEmail);
+
+      this.filteredUserData[0].userEmail;
+
       const userNmaeLst = this.filteredUserData.map(x => x.locationAccess);
       this.dataSharedService.userSavedData.next(userNmaeLst);
     }
   }
   nodeSelectionHandler(node: any) {
     debugger
-    // alert(JSON.stringify(node));
+
     const userDetails = {
       createD_TIMESTAMP: new Date(),
       createD_BY: this.selectedUser,
       modifieD_TIMESTAMP: new Date(),
-      modifieD_BY: "",
+      modifieD_BY: this.userEmailValue,
       userId: this.selectedUser,
-      userEmail: 'raj@yopmail.com',      
+      userEmail: this.userEmailValue,
       userCategory: this.userCategory.nativeElement.value,
       locationAccess: node.item
     };
@@ -76,26 +80,23 @@ export class AppComponent implements AfterViewInit {
     this.userDataArray = [];
     this.userService.getAllUsers().subscribe(
       (data) => {
-        // Successful response
+
         if (data) {
-          debugger;
           this.userDataArray = data;
-          if(this.selectedUser){
-            debugger;
-            this.filteredUserData = this.userDataArray.filter(x => x.userId == this.selectedUser);
+          if (this.selectedUser) {
+            this.filteredUserData = this.userDataArray.filter(x => x.userEmail == this.selectedUser);
           }
         }
       },
       (error) => {
         // Error handling
         console.error('An error occurred:', error);
-        // You can display an error message or perform any other error handling logic here
+
       }
     );
   };
   updateUser() {
-    //alert('CLICKED');
-    //please create proper userObject and send to service method
+
     const userDetails = {
       createD_TIMESTAMP: new Date("2020-07-02T00:00:00"),
       createD_BY: "SeanC",
@@ -113,12 +114,13 @@ export class AppComponent implements AfterViewInit {
 
     )
   }
-  deleteUser(userId: string) {
-    debugger;
-    this.userService.deleteUser(userId).subscribe((res) => {
-      // Successful response
-      if (res) {
-        console.log(res);
+  deleteUser(userId: string, locationAccess: string) {
+    this.userService.deleteUser(userId, locationAccess).subscribe({
+      next: (response) => {
+        this.getAllUsers();
+      },
+      error: (error) => {
+        console.log(error);
       }
     });
   }
