@@ -24,6 +24,7 @@ export class AppComponent implements AfterViewInit {
   selectedUser!: string;
   sideBarOpen = true;
   userEmailValue: string = "";
+ // dtOptions: any = {};
 
   sideBarToggler() {
     this.sideBarOpen = !this.sideBarOpen;
@@ -35,6 +36,16 @@ export class AppComponent implements AfterViewInit {
     private readonly userService: UserService,
     private readonly dataSharedService: DataSharedService) {
     this.selectedLogonName = this.userDataService.getSelectedLogonName();
+    // this.dtOptions = {
+    //   pagingType: 'full_numbers',
+    //   pageLength: 5,
+    //   lengthMenu : [5,10,15,25,50,75,100],
+    //   processing: true,
+    //   ordering : true,
+    //   columnDefs: [
+    //     { "orderable": false, "targets": [0,1] }
+    //   ]
+    // };
   }
   userChangeHandler(selectedUserEmail: string) {
     this.userDataListForSave = [];
@@ -85,6 +96,7 @@ export class AppComponent implements AfterViewInit {
           this.userDataArray = data;
           if (this.selectedUser) {
             this.filteredUserData = this.userDataArray.filter(x => x.userEmail == this.selectedUser);
+            //console.log(this.filteredUserData,"userdata");
           }
         }
       },
@@ -135,4 +147,6 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
+
+
 }

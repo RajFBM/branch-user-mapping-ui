@@ -1,111 +1,116 @@
+
 <app-header (toggleSideBarForMe)="sideBarToggler()"></app-header>
+
 <mat-drawer-container>
+  <!-- Main content area -->
+  <mat-drawer-content>
+    <div> <!-- Add a custom class -->
+      <form class="custom-form-width"> <!-- Add a custom class -->
+      
+    
+          <div class="row">
+    
+            <div class="col-md-3 form-group">
+              <app-search-dropdown (userChange)="userChangeHandler($event)"></app-search-dropdown>
+            </div>
+    
+            <div class="col-md-3 form-group">
+              <mat-form-field class="col-md-8">
+                <mat-label>Email Id</mat-label>
+                <input matInput placeholder="Input Field" [value]="userEmailValue || ''" readonly>
+              </mat-form-field>
+            </div>
+    
+            <div class="col-md-3 form-group">
+              <mat-form-field class="col-md-8">
+                <mat-label>User Category</mat-label>
+                <input #userCategory matInput placeholder="User Typs" type="text">
+              </mat-form-field>
+            </div>
+    
+            <div class="col-md-3 form-group">
+              <mat-form-field class="col-md-8">
+                <mat-label>Location</mat-label>
+                <input matInput placeholder="Location Enter" type="text">
+                <button mat-button color="primary">
+                  
+                </button>
+              </mat-form-field>
+              <mat-icon>search</mat-icon> Find
+            </div>
+    
+          </div>
+          <!-- Second Row: Tree View -->
+          <div class="row" >
+    
+            <div class="col-md-5 form-group"
+              style=" height: 600px; overflow-y: scroll;">
+              <tree-checklist-example (nodeSelectionList)="nodeSelectionHandler($event)">Loading</tree-checklist-example>
+            </div>
+            <!-- Second Row: Grid View -->
+            <div class="col-md-7 form-group"
+              style=" height: 600px; overflow-y: scroll;">
+    
+    
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="tab-pane active">
+                    <div class="table-responsive">
+                     
+                      <table class="table table-striped table-bordered table-sm row-border hover"
+                        *ngIf="filteredUserData && filteredUserData.length >0" datatable="ng" >              
+                        <thead>
+                          <tr class="text-center">
+                            <th>UserID</th>
+                            <th>UserCategory </th>
+                            <th>LocationAccess</th>
+                            <th>MODIFIED_TIMESTAMP</th>
+                            <th>MODIFIED_BY</th>
+                            <th>Delete Location</th>
+                          </tr>
+                        </thead>
+    
+                        <tbody>
+                          <tr *ngFor="let user of filteredUserData">
+                            <td>{{ user.userId }}</td>
+                            <td>{{ user.userCategory }}</td>
+                            <td>{{ user.locationAccess }}</td>
+                            <td>{{ user.modifieD_TIMESTAMP}}</td>
+                            <td>{{ user.modifieD_BY }}</td>
+                            <button mat-raised-button [matTooltip]="'Delete'"
+                              (click)="deleteUser(user.userId,user.locationAccess)" [matTooltipPosition]="'above'"
+                              class="btn btn-danger">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+    
+            </div>
+    
+          </div>
+    
+          <!-- Third Row: Buttons -->
+          <div class="row">
+            <div class="col-md-8 "></div>
+            <div class="col-md-4 form-group custom_css">
+              <button class="btn btn-primary" (click)="addUser()" type="primary">Submit</button>
+              <button class="btn btn-secondary" type="accent">Reset</button>
+              <button class="btn btn-danger" type="warn">Close</button>
+            </div>
+          </div>
+   
+      </form>
+    </div>
+  </mat-drawer-content>
+
+  <!-- Sidebar (Drawer) -->
   <mat-drawer mode="side" [opened]="sideBarOpen">
     <app-sidebar></app-sidebar>
   </mat-drawer>
-  <div class="container text-center" style="margin-left: 20px;">
-    <form>
-
-      <div class="row">
-
-        <div class="col-md-3 form-group">
-          <app-search-dropdown (userChange)="userChangeHandler($event)"></app-search-dropdown>
-        </div>
-
-        <div class="col-md-3 form-group">
-          <mat-form-field>
-            <mat-label>Email Id</mat-label>
-            <input matInput placeholder="Input Field" [value]="userEmailValue || ''" readonly>
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-3 form-group">
-          <mat-form-field>
-            <mat-label>User Category</mat-label>
-            <input #userCategory matInput placeholder="User Typs" type="text">
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-3 form-group">
-          <mat-form-field>
-            <mat-label>Location</mat-label>
-            <input matInput placeholder="Location Enter" type="text">
-          </mat-form-field>
-          <button mat-button color="primary">
-            <mat-icon>search</mat-icon> Find
-          </button>
-
-        </div>
-
-      </div>
-      <!-- Second Row: Tree View -->
-      <div class="row" style="width: 140%;">
-
-        <div class="col-md-5 form-group"
-          style="border: 4px solid rgb(169, 238, 236); height: 600px; overflow-y: scroll;">
-          <tree-checklist-example (nodeSelectionList)="nodeSelectionHandler($event)">Loading</tree-checklist-example>
-        </div>
-        <!-- Second Row: Grid View -->
-        <div class="col-md-7 form-group"
-          style="border: 4px solid rgb(179, 121, 170); height: 600px; overflow-y: scroll;">
-
-
-          <div class="card-body">
-            <div class="tab-content">
-              <div class="tab-pane active">
-                <div class="table-responsive">
-
-
-                  <table id="myDataTable" class="table table-striped table-bordered table-sm row-border hover"
-                    *ngIf="filteredUserData && filteredUserData.length >0" datatable="ng">
-
-
-                    <thead>
-                      <tr class="text-center">
-                        <th>UserID</th>
-                        <th>UserCategory </th>
-                        <th>LocationAccess</th>
-                        <th>MODIFIED_TIMESTAMP</th>
-                        <th>MODIFIED_BY</th>
-                        <th>Delete Location</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr *ngFor="let user of filteredUserData">
-                        <td>{{ user.userId }}</td>
-                        <td>{{ user.userCategory }}</td>
-                        <td>{{ user.locationAccess }}</td>
-                        <td>{{ user.modifieD_TIMESTAMP}}</td>
-                        <td>{{ user.modifieD_BY }}</td>
-                        <button mat-raised-button [matTooltip]="'Delete'"
-                          (click)="deleteUser(user.userId,user.locationAccess)" [matTooltipPosition]="'above'"
-                          class="btn btn-danger">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- Third Row: Buttons -->
-      <div class="row">
-        <div class="col-md-9 "></div>
-        <div class="col-md-3 form-group">
-          <button class="btn btn-primary" (click)="addUser()" type="primary">Submit</button>
-          <button class="btn btn-secondary" type="accent">Reset</button>
-          <button class="btn btn-danger" type="warn">Close</button>
-        </div>
-      </div>
-    </form>
-
-
-  </div>
 </mat-drawer-container>
+

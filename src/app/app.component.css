@@ -1,3 +1,43 @@
-button{
-    margin-right: 2rem;
+/* Custom class to make the content use full width */
+.full-width-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 16px; /* Optional padding for spacing */
+  }
+  
+  /* Custom class to control the form width */
+  .custom-form-width {
+    max-width: 100%; /* Adjust this value to control the form width */
+  }
+  .mat-drawer-content {
+    position: relative;
+    z-index: 1;
+    display: block;
+    height: 100%;
+    overflow: hidden !important;
+}
+
+.custom_css button {
+    margin-right: 10px!important;
+    margin-top: 30px!important;
+}
+
+.col-md-5 {
+    flex: 0 0 auto;
+    width: 32.666667% !important;
+}
+ .btn-primary{
+    margin-right: 5px !important;
+    margin-top: 30px !important;
+}
+
+.btn-secondar{
+    margin-right: 7px !important;
+    margin-top: 28px !important;
+}
+#mat-input-2{
+    margin-top: -0.0625em;
+    width:40% !important;
 }

@@ -1,4 +1,4 @@
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="custom-material-theme">
   <mat-tree-node
     *matTreeNodeDef="let node"
     [style.display]="
@@ -10,7 +10,7 @@
   >
     <button class="button__arrow" mat-icon-button disabled></button>
     <mat-checkbox
-      class="checklist-leaf-node"
+      class="checklist-leaf-node  my-custom-checkbox"
       [checked]="checklistSelection.isSelected(node)"
       (change)="todoItemSelectionToggle(node)"
       >{{node.item}}</mat-checkbox
@@ -22,7 +22,7 @@
     *matTreeNodeDef="let node; when: hasChild"
     [style.display]="filterParentNode(node) ? 'none' : 'flex'"
     matTreeNodePadding
-    matTreeNodePaddingIndent="40"
+    matTreeNodePaddingIndent="40" class="my-custom-tree-node"
   >
     <button
       class="button__arrow"

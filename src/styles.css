@@ -2,3 +2,26 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+/* Use ::ng-deep to apply the color to tree nodes and checkboxes */
+::ng-deep .mat-checkbox-checked .mat-checkbox-inner-container {
+    background-color: #336699; /* Change this to your desired color */
+  }
+
+  .mat-checkbox {
+   color:red;
+}
+.mat-checkbox:checked{
+    border:2px solid green;
+}
+
+.mat-checkbox:not(:checked){
+    border:2px solid red;
+}
+
+
+  
+  ::ng-deep mat-tree-node.my-custom-tree-node {
+    color: #336699; /* Change this to your desired color */
+  }
